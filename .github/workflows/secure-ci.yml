@@ -85,6 +85,12 @@ jobs:
             --predicate provenance.json \
             --type slsaprovenance \
             ghcr.io/harshita3001/ledger-api:${{ github.sha }}
+      - name: Verify Cosign signature
+        run: |
+          cosign verify \
+            --certificate-identity-regexp="https://github.com/${{ github.repository }}/.*" \
+            --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+            ghcr.io/harshita3001/ledger-api:${{ github.sha }}
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
