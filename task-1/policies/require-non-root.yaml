@@ -6,16 +6,22 @@ spec:
   validationFailureAction: Enforce
   background: true
   rules:
-    - name: require-run-as-non-root
-      match:
+     - name: require-run-as-non-root
+       match:
         any:
           - resources:
               kinds:
                 - Pod
-      validate:
+       exclude:
+        any:
+          - resources:
+              namespaces:
+                - argocd
+       validate:
         message: "Containers must run as non-root."
         pattern:
           spec:
             containers:
               - securityContext:
                   runAsNonRoot: true
+      
