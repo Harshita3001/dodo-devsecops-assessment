@@ -60,24 +60,26 @@ jobs:
           cosign sign --yes ghcr.io/harshita3001/ledger-api:${{ github.sha }}
       - name: Generate SLSA provenance
         run: |
-          echo '{
-            "_type": "https://in-toto.io/Statement/v0.1",
-            "predicateType": "https://slsa.dev/provenance/v0.2",
-            "predicate": {
-              "builder": {
-                "id": "https://github.com/${{ github.repository }}/actions"
-              },
-              "buildType": "https://github.com/Actions",
-              "invocation": {
-                "configSource": {
-                  "uri": "git+https://github.com/${{ github.repository }}",
-                  "digest": {
-                    "sha1": "${{ github.sha }}"
-                  }
+          cat > provenance.json <<'EOF'
+          {
+            "builder": {
+              "id": "https://github.com/${{ github.repository }}/actions"
+            },
+            "buildType": "https://github.com/Actions",
+            "invocation": {
+              "configSource": {
+                "uri": "git+https://github.com/${{ github.repository }}",
+                "digest": {
+                  "sha1": "${{ github.sha }}"
                 }
               }
-            }
-          }' > provenance.json
+            },
+            "metadata": {
+              "buildInvocationId": "${{ github.run_id }}"
+            },
+            "materials": []
+          }
+          EOF
 
           cosign attest --yes \
             --predicate provenance.json \
