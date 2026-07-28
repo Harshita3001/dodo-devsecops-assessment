@@ -28,9 +28,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r task-1/app/requirements.txt
-
       - name: Gitleaks secret scan
-        uses: gitleaks/gitleaks-action@v2
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/repo" zricethezav/gitleaks:latest detect --source=/repo --no-banner --redact
 
       - name: Semgrep SAST scan
         run: |
